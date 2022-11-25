@@ -12,7 +12,7 @@ public class MainPageComponent extends AbsBaseComponent {
       super(driver);
    }
 
-   @FindBy(className = "header2__auth")
+   @FindBy(css = ".header2__auth")
    private WebElement loginButton;
 
    @FindBy(css = ".ic-blog-default-avatar")
@@ -30,12 +30,11 @@ public class MainPageComponent extends AbsBaseComponent {
    }
 
    public void clickUserProfile(){
-      //WebDriverWait wait = new WebDriverWait(driver, 5);
-      //Assertions.assertTrue(wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("header2-menu__dropdown-text"))));
       userProfileButton.click();
    }
-   public void clickButtonLogin(){
+   public MainPageComponent clickButtonLogin(){
       loginButton.click();
+      return new MainPageComponent(driver);
    }
 
 

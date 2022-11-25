@@ -17,9 +17,15 @@ import java.util.Locale;
 
 public class WebDriverFactory {
 
-   public WebDriver create(String driverName, List<String> options) throws BrowserNotSupportedExeception {
+   public static DriverData setDriverType() {
+      String browserType = System.getProperty("browser").toUpperCase(Locale.ROOT);
+
+      DriverData driverName = DriverData.valueOf(browserType);
+      return driverName;
+   }
+   public WebDriver create(DriverData driverName, List<String> options) throws BrowserNotSupportedExeception {
       switch (driverName) {
-         case "CHROME":
+         case CHROME:
             ChromeOptions chromeOptions = new ChromeOptions();
             if (options.size() > 0) {
                for (String option : options) {
@@ -27,7 +33,7 @@ public class WebDriverFactory {
                }
             }
             return new ChromeDriver(chromeOptions);
-         case "OPERA":
+         case OPERA:
             OperaOptions operaOptions = new OperaOptions();
             if (options.size() > 0) {
                for (String option : options) {
@@ -35,7 +41,7 @@ public class WebDriverFactory {
                }
             }
             return new OperaDriver(operaOptions);
-         case "FIREFOX":
+         case FIREFOX:
             FirefoxOptions firefoxOptions = new FirefoxOptions();
             if (options.size() > 0) {
                for (String option : options) {
@@ -48,31 +54,21 @@ public class WebDriverFactory {
       }
    }
 
-   public static String setDriverName(){
-      String browserType = System.getProperty("browser").toUpperCase(Locale.ROOT);
-      String driverName = null;
-      for (DriverData name : DriverData.values()){
-         if (name.name().equals(browserType)){
-            driverName = browserType;
-         }
-      }
-      return driverName;
-   }
 
+   public void initDriver() throws BrowserNotSupportedExeception {
 
-   public void init() throws BrowserNotSupportedExeception {
-      switch (setDriverName()) {
-         case "CHROME":
+      switch (setDriverType()) {
+         case CHROME:
             WebDriverManager.chromedriver().setup();
             break;
-         case "FIREFOX":
+         case FIREFOX:
             WebDriverManager.firefoxdriver().setup();
             break;
-         case "OPERA":
+         case OPERA:
             WebDriverManager.operadriver().setup();
             break;
          default:
-            throw new BrowserNotSupportedExeception(setDriverName());
+            throw new BrowserNotSupportedExeception(setDriverType());
       }
    }
 }

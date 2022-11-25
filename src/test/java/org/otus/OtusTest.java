@@ -8,13 +8,11 @@ import org.otus.components.UserProfileInfoComponents;
 import org.otus.data.ProfileData.ContactsData;
 import org.otus.exceptions.BrowserNotSupportedExeception;
 import org.otus.driver.WebDriverFactory;
-import org.otus.pages.LoginPage;
 import org.otus.pages.MainPage;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-//import static org.otus.driver.WebDriverFactory.setDriverName;
 
 public class OtusTest {
 
@@ -22,17 +20,16 @@ public class OtusTest {
 
 
    @BeforeAll
-   public static void init() throws BrowserNotSupportedExeception {
-      new WebDriverFactory().init();
+   public static void initDriver() throws BrowserNotSupportedExeception {
+      new WebDriverFactory().initDriver();
 
    }
 
    @BeforeEach
-   public void initDriver() throws BrowserNotSupportedExeception {
+   public void initDriverOptions() throws BrowserNotSupportedExeception {
       List<String> options = new ArrayList<>();
-      options.add("--window-size=1920,1080");
-      driver = new WebDriverFactory().create(WebDriverFactory.setDriverName(), options);
-      //log.info("Test started in {} browser", WebDriverFactory.setDriverName());
+      driver = new WebDriverFactory().create(WebDriverFactory.setDriverType(), options);
+      driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
    }
 
    @AfterEach
@@ -45,17 +42,15 @@ public class OtusTest {
 
 
 
-
    @Test
    public void testMainMenu() throws BrowserNotSupportedExeception {
-      LoginPage loginPage = new LoginPage(driver);
+      LoginPageComponent loginPage = new LoginPageComponent(driver);
       MainPageComponent mainPageComponent = new MainPageComponent(driver);
       LoginPageComponent loginPageComponent = new LoginPageComponent(driver);
       UserProfileInfoComponents userProfileInfoComponents = new UserProfileInfoComponents(driver);
-
+      MainPage mainPage = new MainPage(driver);
       //Открыть https://otus.ru
-      new MainPage(driver)
-              .open("/");
+      mainPage.open("/");
 
 
       //Авторизоваться на сайте
@@ -74,17 +69,18 @@ public class OtusTest {
       userProfileInfoComponents.fillFieldsInfo();
 
       userProfileInfoComponents.deleteCommunicationMethodsIfExist();
-
+      userProfileInfoComponents.clickButtonAddNewContact();
 
 
       userProfileInfoComponents.clickContactDropdownList();
       userProfileInfoComponents.selectContact(ContactsData.VK);
-      userProfileInfoComponents.fillContactInfo();
+
 
       userProfileInfoComponents.clickButtonAddNewContact();
       userProfileInfoComponents.clickContactDropdownList();
       userProfileInfoComponents.selectContact(ContactsData.TELEGRAM);
-      userProfileInfoComponents.fillContactInfo2();
+      userProfileInfoComponents.fillContactInfo();
+      //userProfileInfoComponents.fillContactInfo2();
 
 
 
@@ -94,22 +90,25 @@ public class OtusTest {
       //Открыть https://otus.ru в "чистом браузере"
 
 
-      close();
-      initDriver();
-      new MainPage(driver).open("/");
+      //close();
+      driver.close();
+      driver.quit();
+      initDriverOptions();
 
-
-      //Авторизоваться на сайте
-      LoginPage loginPage2 = new LoginPage(driver);
+      LoginPageComponent loginPage2 = new LoginPageComponent(driver);
       MainPageComponent mainPageComponent2 = new MainPageComponent(driver);
       LoginPageComponent loginPageComponent2 = new LoginPageComponent(driver);
       UserProfileInfoComponents userProfileInfoComponents2 = new UserProfileInfoComponents(driver);
+      MainPage mainPage2 = new MainPage(driver);
 
+
+      //Авторизоваться на сайте
+      mainPage2.open("/");
       mainPageComponent2.clickButtonLogin();
 
-      loginPage2.waitVisible();
-      loginPage2.authorizationUser();
-      loginPage2.waitClickInvisible();
+      loginPageComponent2.waitVisible();
+      loginPageComponent2.authorizationUser();
+      loginPageComponent2.waitClickInvisible();
 
 
       //Войти в личный кабинет
