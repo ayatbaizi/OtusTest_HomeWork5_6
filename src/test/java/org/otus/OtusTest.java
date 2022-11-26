@@ -99,7 +99,7 @@ public class OtusTest {
       driver.quit();
       initDriverOptions();
 
-      
+
       MainPageComponent mainPageComponent2 = new MainPageComponent(driver);
       LoginPageComponent loginPageComponent2 = new LoginPageComponent(driver);
       UserProfileInfoComponents userProfileInfoComponents2 = new UserProfileInfoComponents(driver);
