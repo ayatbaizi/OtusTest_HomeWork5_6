@@ -1,5 +1,6 @@
 package org.otus;
 
+import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.otus.components.LoginPageComponent;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class OtusTest {
 
    private WebDriver driver;
-
+   protected org.apache.logging.log4j.Logger logger = LogManager.getLogger(OtusTest.class);
 
    @BeforeAll
    public static void initDriver() throws BrowserNotSupportedExeception {
@@ -30,6 +31,7 @@ public class OtusTest {
       List<String> options = new ArrayList<>();
       driver = new WebDriverFactory().create(WebDriverFactory.setDriverType(), options);
       driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+      logger.info("Драйвер запущен");
    }
 
    @AfterEach
@@ -46,12 +48,12 @@ public class OtusTest {
    public void testMainMenu() throws BrowserNotSupportedExeception {
       LoginPageComponent loginPage = new LoginPageComponent(driver);
       MainPageComponent mainPageComponent = new MainPageComponent(driver);
-      LoginPageComponent loginPageComponent = new LoginPageComponent(driver);
+
       UserProfileInfoComponents userProfileInfoComponents = new UserProfileInfoComponents(driver);
       MainPage mainPage = new MainPage(driver);
       //Открыть https://otus.ru
       mainPage.open("/");
-
+      logger.info("https://otus.ru открыт");
 
       //Авторизоваться на сайте
       mainPageComponent.clickButtonLogin();
@@ -59,11 +61,12 @@ public class OtusTest {
       loginPage.waitVisible();
       loginPage.authorizationUser();
       loginPage.waitClickInvisible();
-
+      logger.info("Авторизация пользователя прошла");
 
       //Войти в личный кабинет
       mainPageComponent.moveCoursorOnUserIcon();
       mainPageComponent.clickUserProfile();
+      logger.info("Переход в личный кабинет выполнен");
 
       //В разделе "О себе" заполнить все поля "Личные данные" и добавить не менее двух контактов
       userProfileInfoComponents.fillFieldsInfo();
@@ -80,13 +83,14 @@ public class OtusTest {
       userProfileInfoComponents.clickContactDropdownList();
       userProfileInfoComponents.selectContact(ContactsData.TELEGRAM);
       userProfileInfoComponents.fillContactInfo();
-      //userProfileInfoComponents.fillContactInfo2();
+
+      logger.info("Данные о пользователе заполнены");
 
 
 
       //Нажать сохранить
       userProfileInfoComponents.clickSaveAndContinueButton();
-
+      logger.info("Данные сохранены");
       //Открыть https://otus.ru в "чистом браузере"
 
 
@@ -95,7 +99,7 @@ public class OtusTest {
       driver.quit();
       initDriverOptions();
 
-      LoginPageComponent loginPage2 = new LoginPageComponent(driver);
+      
       MainPageComponent mainPageComponent2 = new MainPageComponent(driver);
       LoginPageComponent loginPageComponent2 = new LoginPageComponent(driver);
       UserProfileInfoComponents userProfileInfoComponents2 = new UserProfileInfoComponents(driver);
@@ -104,19 +108,24 @@ public class OtusTest {
 
       //Авторизоваться на сайте
       mainPage2.open("/");
+      logger.info("Отус в 'чистом браузере' запущен");
+
       mainPageComponent2.clickButtonLogin();
 
       loginPageComponent2.waitVisible();
       loginPageComponent2.authorizationUser();
       loginPageComponent2.waitClickInvisible();
-
+      logger.info("Авторизация пользователя прошла");
 
       //Войти в личный кабинет
       mainPageComponent2.moveCoursorOnUserIcon();
       mainPageComponent2.clickUserProfile();
+      logger.info("Переход в личный кабинет выполнен");
 
       //      Проверить, что в разделе "О себе" отображаются указанные ранее данные
       userProfileInfoComponents2.checkInfoData();
+      logger.info("Введенная ранее информация отображается");
+
    }
 
 }
